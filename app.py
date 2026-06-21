@@ -107,7 +107,7 @@ def products():
                 '''
                 INSERT INTO products
                 (name, quantity, purchase_price, selling_price, minimum_stock)
-                VALUES (?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?)
                 ''',
                 (
                     name,

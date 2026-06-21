@@ -194,45 +194,43 @@ input{
     padding:15px;
 
     border-radius:10px;
-s
+
     margin-top:20px;
 
     cursor:pointer;
 
 }
 
-
 .btn-yellow{
 
     background:#facc15;
-
-    border:none;
-
-    padding:10px;
-
-    border-radius:10px;
-
-    cursor:pointer;
+    color:black;
+    padding:8px 12px;
+    border-radius:8px;
+    text-decoration:none;
+    display:block;
+    width:85px;
+    text-align:center;
+    margin-bottom:8px;
+    font-size:13px;
+    font-weight:bold;
 
 }
-
 
 .btn-red{
 
     background:#ef4444;
-
     color:white;
-
-    border:none;
-
-    padding:10px;
-
-    border-radius:10px;
-
-    cursor:pointer;
+    padding:8px 12px;
+    border-radius:8px;
+    text-decoration:none;
+    display:block;
+    width:85px;
+    text-align:center;
+    font-size:13px;
+    font-weight:bold;
 
 }
-
 
 table{
 
@@ -379,5 +377,52 @@ select{
     border-radius:10px;
 
     cursor:pointer;
+
+}
+
+.low-stock{
+
+    background:#dc2626;
+    color:white;
+    padding:6px 10px;
+    border-radius:20px;
+    display:inline-block;
+    text-align:center;
+    min-width:95px;
+    font-size:12px;
+    font-weight:bold;
+
+}
+
+.normal-stock{
+
+    background:#16a34a;
+    color:white;
+    padding:6px 10px;
+    border-radius:20px;
+    display:inline-block;
+    text-align:center;
+    min-width:95px;
+    font-size:12px;
+    font-weight:bold;
+
+}
+
+.actions{
+
+    min-width:110px;
+    text-align:center;
+
+}
+
+.actions a{
+
+    margin:auto;
+
+}
+
+.table-container{
+
+    overflow-x:auto;
 
 }

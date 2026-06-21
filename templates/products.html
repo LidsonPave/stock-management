@@ -143,6 +143,8 @@ Pesquisar
 </form>
 
 <br>
+<div class="table-container">
+
 <table>
 
 <tr>
@@ -152,6 +154,8 @@ Pesquisar
 <th>Quantidade</th>
 <th>Compra</th>
 <th>Venda</th>
+<th>Mínimo</th>
+<th>Status</th>
 <th>Ações</th>
 
 </tr>
@@ -166,38 +170,51 @@ Pesquisar
 <td>{{ product[3] }}</td>
 <td>{{ product[4] }}</td>
 
+<td>{{ product[5] }}</td>
+
+<td>
+
+{% if product[2] <= product[5] %}
+
+<span class="low-stock">
+
+🔴 Estoque Baixo
+
+</span>
+
+{% else %}
+
+<span class="normal-stock">
+
+🟢 Normal
+
+</span>
+
+{% endif %}
+
 <td class="actions">
 
-<a href="/edit_product/{{ product[0] }}">
+    <a
+    href="/edit_product/{{ product[0] }}"
+    class="btn-yellow"
+    >
+        ✏️ Editar
+    </a>
 
-<button class="btn-yellow">
-
-Editar
-
-</button>
-
-</a>
-
-<a
-href="/delete_product/{{ product[0] }}"
-onclick="return confirm('Tem certeza que deseja excluir este produto?')"
->
-
-<button class="btn-red">
-
-Excluir
-
-</button>
-
-</a>
+    <a
+    href="/delete_product/{{ product[0] }}"
+    class="btn-red"
+    onclick="return confirm('Tem certeza que deseja excluir?')"
+    >
+        🗑 Excluir
+    </a>
 
 </td>
-
-</tr>
 
 {% endfor %}
 
 </table>
+</div>
 
 </div>
 
