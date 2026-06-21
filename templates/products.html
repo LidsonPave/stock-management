@@ -4,120 +4,193 @@
 
 <h1>📦 Produtos</h1>
 
-<div class="card">
 
-    <button class="btn-blue">
-        + Novo Produto
-    </button>
+<button
+class="btn-blue"
+onclick="toggleForm()"
+>
 
-    <h2>Cadastrar Produto</h2>
++ Novo Produto
 
-    <form method="POST">
+</button>
 
-        <label>Nome do Produto</label>
 
-        <input
-            type="text"
-            name="name"
-            placeholder="Digite o nome do produto"
-            required
-        >
+<div
+class="card"
+id="product-form"
 
-        <label>Quantidade</label>
+{% if edit_product %}
+style="display:block"
+{% else %}
+style="display:none"
+{% endif %}
+>
 
-        <input
-            type="number"
-            name="quantity"
-            placeholder="Digite a quantidade"
-            required
-        >
+{% if edit_product %}
+<h2>Editar Produto</h2>
+{% else %}
+<h2>Cadastrar Produto</h2>
+{% endif %}
 
-        <label>Preço de Compra</label>
 
-        <input
-            type="number"
-            step="0.01"
-            name="purchase_price"
-            placeholder="Ex: 20"
-            required
-        >
+<form method="POST">
 
-        <label>Preço de Venda</label>
+<input
+type="hidden"
+name="id"
+value="{{ edit_product[0] if edit_product }}"
+>
 
-        <input
-            type="number"
-            step="0.01"
-            name="selling_price"
-            placeholder="Ex: 35"
-            required
-        >
+<label>Nome do Produto</label>
 
-        <button type="submit" class="btn-blue">
-            Cadastrar Produto
-        </button>
+<input
+type="text"
+name="name"
+required
+value="{{ edit_product[1] if edit_product }}"
+>
 
-    </form>
+<label>Quantidade</label>
+
+<input
+type="number"
+name="quantity"
+required
+value="{{ edit_product[2] if edit_product }}"
+>
+
+<label>Preço de Compra</label>
+
+<input
+type="number"
+step="0.01"
+name="purchase_price"
+required
+value="{{ edit_product[3] if edit_product }}"
+>
+
+<label>Preço de Venda</label>
+
+<input
+type="number"
+step="0.01"
+name="selling_price"
+required
+value="{{ edit_product[4] if edit_product }}"
+>
+
+
+{% if edit_product %}
+
+<button class="btn-blue">
+
+Salvar Alterações
+
+</button>
+
+<a href="/products">
+
+<button
+type="button"
+class="btn-yellow"
+>
+
+Cancelar
+
+</button>
+
+</a>
+
+{% else %}
+
+<button class="btn-blue">
+
+Cadastrar Produto
+
+</button>
+
+{% endif %}
+
+</form>
 
 </div>
 
 
 <div class="card">
 
-    <h2>Produtos Cadastrados</h2>
+<h2>Produtos Cadastrados</h2>
+<form method="GET">
 
-    <table>
+<input
+type="text"
+name="search"
+placeholder="🔍 Pesquisar produto"
+>
 
-        <tr>
+<button class="btn-blue">
 
-            <th>ID</th>
-            <th>Produto</th>
-            <th>Quantidade</th>
-            <th>Compra</th>
-            <th>Venda</th>
-            <th>Ações</th>
+Pesquisar
 
-        </tr>
+</button>
 
-        {% for product in products %}
+</form>
 
-        <tr>
+<br>
+<table>
 
-            <td>{{ product[0] }}</td>
+<tr>
 
-            <td>{{ product[1] }}</td>
+<th>ID</th>
+<th>Produto</th>
+<th>Quantidade</th>
+<th>Compra</th>
+<th>Venda</th>
+<th>Ações</th>
 
-            <td>{{ product[2] }}</td>
+</tr>
 
-            <td>{{ product[3] }}</td>
+{% for product in products %}
 
-            <td>{{ product[4] }}</td>
+<tr>
 
-            <td>
+<td>{{ product[0] }}</td>
+<td>{{ product[1] }}</td>
+<td>{{ product[2] }}</td>
+<td>{{ product[3] }}</td>
+<td>{{ product[4] }}</td>
 
-                <button class="btn-yellow">
-                    Editar
-                </button>
+<td class="actions">
 
-                <a
-                    href="/delete_product/{{ product[0] }}"
-                    onclick="return confirm('Tem certeza que deseja excluir este produto?')"
-                >
+<a href="/edit_product/{{ product[0] }}">
 
-                    <button class="btn-red">
+<button class="btn-yellow">
 
-                        Excluir
+Editar
 
-                    </button>
+</button>
 
-                </a>
+</a>
 
-            </td>
+<a
+href="/delete_product/{{ product[0] }}"
+onclick="return confirm('Tem certeza que deseja excluir este produto?')"
+>
 
-        </tr>
+<button class="btn-red">
 
-        {% endfor %}
+Excluir
 
-    </table>
+</button>
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
 
 </div>
 

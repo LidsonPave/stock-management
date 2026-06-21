@@ -2,8 +2,38 @@
 
 {% block content %}
 
-<h2>Bem-vindo!</h2>
+<h1>Bem-vindo, João! 👋</h1>
 
-<p>Sistema de gestão de estoque para pequenas lojas.</p>
+<p>Gerencie seu estoque e acompanhe seu negócio.</p>
+
+<!-- DASHBOARD -->
+<div class="dashboard">
+
+    <div class="card">
+        <h2>📦 Produtos</h2>
+        <h3>{{ total_products }}</h3>
+    </div>
+
+    <div class="card">
+        <h2>📊 Estoque</h2>
+        <h3>{{ total_stock }}</h3>
+    </div>
+
+    <div class="card">
+        <h2>💰 Investido</h2>
+        <h3>{{ total_investment }} MZN</h3>
+    </div>
+
+    <div class="card">
+        <h2>🛒 Venda</h2>
+        <h3>{{ total_sales_value }} MZN</h3>
+    </div>
+
+    <div class="card">
+        <h2>📈 Lucro</h2>
+        <h3>{{ total_profit }} MZN</h3>
+    </div>
+
+</div>
 
 {% endblock %}

@@ -12,52 +12,75 @@
 
 <body>
 
-    <div class="sidebar">
+<div class="sidebar">
 
-        <div class="logo">
+    <div class="logo">
 
-            <div class="logo-icon">
-                📦
-            </div>
-
-            <div>
-
-                <h2>Stock Management</h2>
-
-                <p>Sistema de Gestão de Estoque</p>
-
-            </div>
-
+        <div class="logo-icon">
+            📦
         </div>
 
-        <div class="menu-title">
+        <div>
 
-            MENU PRINCIPAL
+            <h2>Stock Management</h2>
 
-        </div>
-
-        <div class="menu">
-
-            <a href="/">🏠 Home</a>
-
-            <a href="/products">📦 Produtos</a>
-
-            <a href="/sales">💰 Vendas</a>
-
-            <a href="/reports">📊 Relatórios</a>
+            <p>Sistema de Gestão de Estoque</p>
 
         </div>
 
     </div>
 
+    <div class="menu-title">
 
-    <div class="content">
-
-        {% block content %}
-
-        {% endblock %}
+        MENU PRINCIPAL
 
     </div>
+
+    <div class="menu">
+
+        <a href="/">🏠 Home</a>
+
+        <a href="/products">📦 Produtos</a>
+
+        <a href="/sales">💰 Vendas</a>
+
+        <a href="/reports">📊 Relatórios</a>
+
+    </div>
+
+</div>
+
+
+<div class="content">
+
+    {% block content %}
+
+    {% endblock %}
+
+</div>
+
+
+<script>
+
+function toggleForm(){
+
+    let form = document.getElementById("product-form");
+
+    if(form.style.display=="none"){
+
+        form.style.display="block";
+
+    }
+
+    else{
+
+        form.style.display="none";
+
+    }
+
+}
+
+</script>
 
 </body>
 
