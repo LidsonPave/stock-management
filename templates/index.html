@@ -2,36 +2,87 @@
 
 {% block content %}
 
-<h1>Bem-vindo, João! 👋</h1>
+<h1>
 
-<p>Gerencie seu estoque e acompanhe seu negócio.</p>
+    Bem-vindo, João! 👋
 
-<!-- DASHBOARD -->
+</h1>
+
+<p>
+
+    Gerencie seu estoque e acompanhe seu negócio.
+
+</p>
+
+
 <div class="dashboard">
 
-    <div class="card">
-        <h2>📦 Produtos</h2>
-        <h3>{{ total_products }}</h3>
+    <div class="dashboard-card">
+
+        <h3>📦 Produtos</h3>
+
+        <h1>
+
+            {{ total_products }}
+
+        </h1>
+
     </div>
 
-    <div class="card">
-        <h2>📊 Estoque</h2>
-        <h3>{{ total_stock }}</h3>
+
+
+    <div class="dashboard-card">
+
+        <h3>📚 Estoque</h3>
+
+        <h1>
+
+            {{ total_stock }}
+
+        </h1>
+
     </div>
 
-    <div class="card">
-        <h2>💰 Investido</h2>
-        <h3>{{ total_investment }} MZN</h3>
+
+
+    <div class="dashboard-card">
+
+        <h3>💵 Investimento</h3>
+
+        <h1>
+
+            {{ total_investment }} MT
+
+        </h1>
+
     </div>
 
-    <div class="card">
-        <h2>🛒 Venda</h2>
-        <h3>{{ total_sales_value }} MZN</h3>
+
+
+    <div class="dashboard-card">
+
+        <h3>💰 Venda Potencial</h3>
+
+        <h1>
+
+            {{ total_sales_value }} MT
+
+        </h1>
+
     </div>
 
-    <div class="card">
-        <h2>📈 Lucro</h2>
-        <h3>{{ total_profit }} MZN</h3>
+
+
+    <div class="dashboard-card">
+
+        <h3>📈 Lucro Potencial</h3>
+
+        <h1>
+
+            {{ total_profit }} MT
+
+        </h1>
+
     </div>
 
 </div>

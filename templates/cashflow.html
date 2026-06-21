@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>💵 Fluxo de Caixa</h1>
+
+<p>
+
+Controle das retiradas da banca.
+
+</p>
+
+<div class="dashboard">
+
+    <div class="dashboard-card">
+
+        <h3>💰 Total de Vendas</h3>
+
+        <h1>
+
+            {{ total_sales }} MT
+
+        </h1>
+
+    </div>
+
+
+    <div class="dashboard-card">
+
+        <h3>🏠 Retiradas</h3>
+
+        <h1>
+
+            {{ total_withdrawals }} MT
+
+        </h1>
+
+    </div>
+
+
+    <div class="dashboard-card">
+
+        <h3>💵 Saldo Atual</h3>
+
+        <h1>
+
+            {{ balance }} MT
+
+        </h1>
+
+    </div>
+
+</div>
+
+<div class="card">
+
+<h2>
+
+Registrar Retirada
+
+</h2>
+
+<form method="POST">
+
+<label>
+
+Descrição
+
+</label>
+
+<input
+type="text"
+name="description"
+required
+placeholder="Ex: Compra de pão"
+>
+
+
+<label>
+
+Valor (MT)
+
+</label>
+
+<input
+type="number"
+step="0.01"
+name="amount"
+required
+>
+
+
+<button class="btn-red">
+
+Registrar Retirada
+
+</button>
+
+</form>
+
+</div>
+
+
+
+<div class="card">
+
+<h2>
+
+Histórico de Retiradas
+
+</h2>
+
+<table>
+
+<tr>
+
+<th>ID</th>
+
+<th>Descrição</th>
+
+<th>Valor</th>
+
+<th>Data</th>
+
+</tr>
+
+{% for withdrawal in withdrawals %}
+
+<tr>
+
+<td>
+
+{{ withdrawal[0] }}
+
+</td>
+
+<td>
+
+{{ withdrawal[1] }}
+
+</td>
+
+<td>
+
+{{ withdrawal[2] }} MT
+
+</td>
+
+<td>
+
+{{ withdrawal[3] }}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+{% endblock %}

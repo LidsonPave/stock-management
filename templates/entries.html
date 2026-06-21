@@ -2,18 +2,17 @@
 
 {% block content %}
 
-<h1>💰 Vendas</h1>
+<h1>📥 Entrada de Estoque</h1>
 
 <p>
 
-Registre saídas de produtos do estoque.
+Registre novas entradas de produtos.
 
 </p>
 
-
 <div class="card">
 
-    <h2>Nova Venda</h2>
+    <h2>Nova Entrada</h2>
 
     <form method="POST">
 
@@ -40,8 +39,7 @@ Registre saídas de produtos do estoque.
 
         </select>
 
-
-        <label>Quantidade Vendida</label>
+        <label>Quantidade de Entrada</label>
 
         <input
             type="number"
@@ -52,7 +50,7 @@ Registre saídas de produtos do estoque.
 
         <button class="btn-blue">
 
-            Registrar Venda
+            + Adicionar ao Estoque
 
         </button>
 
@@ -63,7 +61,7 @@ Registre saídas de produtos do estoque.
 
 <div class="card">
 
-    <h2>Histórico de Vendas</h2>
+    <h2>Histórico de Entradas</h2>
 
     <table>
 

@@ -3,30 +3,41 @@ import sqlite3
 
 app = Flask(__name__)
 
-
 @app.route('/')
 def home():
 
     connection = sqlite3.connect('database/database.db')
     cursor = connection.cursor()
 
-    cursor.execute('SELECT COUNT(*) FROM products')
+    cursor.execute(
+        'SELECT COUNT(*) FROM products'
+    )
+
     total_products = cursor.fetchone()[0]
 
-    cursor.execute('SELECT SUM(quantity) FROM products')
+
+    cursor.execute(
+        'SELECT SUM(quantity) FROM products'
+    )
+
     total_stock = cursor.fetchone()[0]
+
 
     cursor.execute(
         'SELECT SUM(quantity * purchase_price) FROM products'
     )
+
     total_investment = cursor.fetchone()[0]
+
 
     cursor.execute(
         'SELECT SUM(quantity * selling_price) FROM products'
     )
+
     total_sales_value = cursor.fetchone()[0]
 
     connection.close()
+
 
     if total_stock is None:
         total_stock = 0
@@ -37,15 +48,24 @@ def home():
     if total_sales_value is None:
         total_sales_value = 0
 
+
     total_profit = total_sales_value - total_investment
 
+
     return render_template(
+
         'index.html',
+
         total_products=total_products,
+
         total_stock=total_stock,
-        total_investment=total_investment,
-        total_sales_value=total_sales_value,
-        total_profit=total_profit
+
+        total_investment=round(total_investment, 2),
+
+        total_sales_value=round(total_sales_value, 2),
+
+        total_profit=round(total_profit, 2)
+
     )
 
 @app.route('/products', methods=['GET', 'POST'])
@@ -61,13 +81,14 @@ def products():
         quantity = request.form['quantity']
         purchase_price = request.form['purchase_price']
         selling_price = request.form['selling_price']
+        minimum_stock = request.form['minimum_stock']
 
         if product_id:
 
             cursor.execute(
                 '''
                 UPDATE products
-                SET name=?, quantity=?, purchase_price=?, selling_price=?
+                SET name=?, quantity=?, purchase_price=?, selling_price=?, minimum_stock=?
                 WHERE id=?
                 ''',
                 (
@@ -75,6 +96,7 @@ def products():
                     quantity,
                     purchase_price,
                     selling_price,
+                    minimum_stock,
                     product_id
                 )
             )
@@ -84,14 +106,15 @@ def products():
             cursor.execute(
                 '''
                 INSERT INTO products
-                (name, quantity, purchase_price, selling_price)
+                (name, quantity, purchase_price, selling_price, minimum_stock)
                 VALUES (?, ?, ?, ?)
                 ''',
                 (
                     name,
                     quantity,
                     purchase_price,
-                    selling_price
+                    selling_price,
+                    minimum_stock
                 )
             )
 
@@ -196,11 +219,309 @@ def delete_product(id):
 
     return redirect('/products')
 
+@app.route('/entries', methods=['GET', 'POST'])
+def entries():
 
-@app.route('/sales')
+    connection = sqlite3.connect('database/database.db')
+    cursor = connection.cursor()
+
+    if request.method == 'POST':
+
+        product_id = request.form['product_id']
+        quantity = int(request.form['quantity'])
+
+        cursor.execute(
+            '''
+            UPDATE products
+            SET quantity = quantity + ?
+            WHERE id = ?
+            ''',
+            (quantity, product_id)
+        )
+
+        cursor.execute(
+            '''
+            INSERT INTO stock_movements
+            (product_id, movement_type, quantity)
+            VALUES (?, ?, ?)
+            ''',
+            (
+                product_id,
+                'Entrada',
+                quantity
+            )
+        )
+
+        connection.commit()
+
+        return redirect('/entries')
+
+    cursor.execute(
+        '''
+        SELECT id, name, quantity
+        FROM products
+        ORDER BY name
+        '''
+    )
+
+    products = cursor.fetchall()
+
+    cursor.execute(
+        '''
+        SELECT
+            stock_movements.id,
+            products.name,
+            stock_movements.quantity,
+            stock_movements.date
+
+        FROM stock_movements
+
+        INNER JOIN products
+        ON products.id = stock_movements.product_id
+
+        WHERE stock_movements.movement_type='Entrada'
+
+        ORDER BY stock_movements.id DESC
+        '''
+    )
+
+    movements = cursor.fetchall()
+
+    connection.close()
+
+    return render_template(
+        'entries.html',
+        products=products,
+        movements=movements
+     )
+
+@app.route('/sales', methods=['GET', 'POST'])
 def sales():
-    return render_template('sales.html')
 
+    connection = sqlite3.connect('database/database.db')
+    cursor = connection.cursor()
+
+    if request.method == 'POST':
+
+        product_id = request.form['product_id']
+        quantity = int(request.form['quantity'])
+
+        cursor.execute(
+            '''
+            SELECT quantity
+            FROM products
+            WHERE id = ?
+            ''',
+            (product_id,)
+        )
+
+        current_stock = cursor.fetchone()[0]
+
+        if quantity <= current_stock:
+
+            cursor.execute(
+                '''
+                UPDATE products
+                SET quantity = quantity - ?
+                WHERE id = ?
+                ''',
+                (quantity, product_id)
+            )
+
+            cursor.execute(
+                '''
+                SELECT selling_price
+                FROM products
+                WHERE id = ?
+                ''',
+                (product_id,)
+            )
+
+            selling_price = cursor.fetchone()[0]
+
+            total_value = quantity * selling_price
+
+            cursor.execute(
+                '''
+                INSERT INTO stock_movements
+                (
+                    product_id,
+                    movement_type,
+                    quantity,
+                    total_value
+                )
+                VALUES (?, ?, ?, ?)
+                ''',
+                (
+                    product_id,
+                    'Saída',
+                    quantity,
+                    total_value
+                )
+            )
+
+            connection.commit()
+
+        connection.close()
+
+        return redirect('/sales')
+
+    cursor.execute(
+        '''
+        SELECT id, name, quantity
+        FROM products
+        ORDER BY name
+        '''
+    )
+
+    products = cursor.fetchall()
+
+    cursor.execute(
+        '''
+        SELECT
+            stock_movements.id,
+            products.name,
+            stock_movements.quantity,
+            stock_movements.date
+
+        FROM stock_movements
+
+        INNER JOIN products
+        ON products.id = stock_movements.product_id
+
+        WHERE stock_movements.movement_type='Saída'
+
+        ORDER BY stock_movements.id DESC
+        '''
+    )
+
+    movements = cursor.fetchall()
+
+    connection.close()
+
+    return render_template(
+        'sales.html',
+        products=products,
+        movements=movements
+    )
+
+@app.route('/movements')
+def movements():
+
+    connection = sqlite3.connect('database/database.db')
+
+    cursor = connection.cursor()
+
+    cursor.execute(
+        '''
+        SELECT
+
+            stock_movements.id,
+
+            products.name,
+
+            stock_movements.movement_type,
+
+            stock_movements.quantity,
+
+            stock_movements.date
+
+        FROM stock_movements
+
+        INNER JOIN products
+
+        ON products.id = stock_movements.product_id
+
+        ORDER BY stock_movements.id DESC
+        '''
+    )
+
+    movements_list = cursor.fetchall()
+
+    connection.close()
+
+    return render_template(
+        'movements.html',
+        movements=movements_list
+    )
+
+@app.route('/cashflow', methods=['GET', 'POST'])
+def cashflow():
+
+    connection = sqlite3.connect('database/database.db')
+    cursor = connection.cursor()
+
+    if request.method == 'POST':
+
+        description = request.form['description']
+        amount = float(request.form['amount'])
+
+        cursor.execute(
+            '''
+            INSERT INTO cash_flow
+            (description, amount)
+            VALUES (?, ?)
+            ''',
+            (
+                description,
+                amount
+            )
+        )
+
+        connection.commit()
+
+        return redirect('/cashflow')
+
+
+    cursor.execute(
+        '''
+        SELECT *
+        FROM cash_flow
+        ORDER BY id DESC
+        '''
+    )
+
+    withdrawals = cursor.fetchall()
+
+
+    cursor.execute(
+        '''
+        SELECT SUM(total_value)
+        FROM stock_movements
+        WHERE movement_type='Saída'
+        '''
+    )
+
+    total_sales = cursor.fetchone()[0]
+
+    if total_sales is None:
+        total_sales = 0
+
+
+    cursor.execute(
+        '''
+        SELECT SUM(amount)
+        FROM cash_flow
+        '''
+    )
+
+    total_withdrawals = cursor.fetchone()[0]
+
+    if total_withdrawals is None:
+        total_withdrawals = 0
+
+
+    balance = total_sales - total_withdrawals
+
+    connection.close()
+
+    return render_template(
+        'cashflow.html',
+        withdrawals=withdrawals,
+        total_sales=round(total_sales,2),
+        total_withdrawals=round(total_withdrawals,2),
+        balance=round(balance,2)
+    )
 
 @app.route('/reports')
 def reports():

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>📜 Histórico de Movimentações</h1>
+
+<p>
+
+Acompanhe todas as entradas e saídas do estoque.
+
+</p>
+
+<div class="card">
+
+<table>
+
+<tr>
+
+<th>ID</th>
+<th>Produto</th>
+<th>Tipo</th>
+<th>Quantidade</th>
+<th>Data</th>
+
+</tr>
+
+{% for movement in movements %}
+
+<tr>
+
+<td>{{ movement[0] }}</td>
+
+<td>{{ movement[1] }}</td>
+
+<td>
+
+{% if movement[2]=='Entrada' %}
+
+<span class="entry-tag">
+
+📥 Entrada
+
+</span>
+
+{% else %}
+
+<span class="exit-tag">
+
+💰 Saída
+
+</span>
+
+{% endif %}
+
+</td>
+
+<td>
+
+{{ movement[3] }}
+
+</td>
+
+<td>
+
+{{ movement[4] }}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+{% endblock %}

@@ -78,7 +78,14 @@ name="selling_price"
 required
 value="{{ edit_product[4] if edit_product }}"
 >
+<label>Estoque Mínimo</label>
 
+<input
+type="number"
+name="minimum_stock"
+value="5"
+required
+>
 
 {% if edit_product %}
 
