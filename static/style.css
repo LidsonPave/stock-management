@@ -1,0 +1,261 @@
+body{
+
+    margin:0;
+
+    background:#f3f4f6;
+
+    font-family:Arial, sans-serif;
+
+}
+
+
+.sidebar{
+
+    position:fixed;
+
+    left:0;
+
+    top:0;
+
+    width:280px;
+
+    height:100vh;
+
+    background:#071952;
+
+    padding:25px;
+
+    box-sizing:border-box;
+
+    color:white;
+
+}
+
+
+.logo{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+
+.logo-icon{
+
+    width:65px;
+
+    height:65px;
+
+    background:#2563eb;
+
+    border-radius:15px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:35px;
+
+}
+
+
+.logo h2{
+
+    margin:0;
+
+    color:white;
+
+}
+
+
+.logo p{
+
+    margin-top:5px;
+
+    color:#cbd5e1;
+
+}
+
+
+.menu-title{
+
+    margin-top:50px;
+
+    margin-bottom:20px;
+
+    color:#94a3b8;
+
+    font-size:14px;
+
+    font-weight:bold;
+
+}
+
+
+.menu a{
+
+    display:block;
+
+    text-decoration:none;
+
+    color:white;
+
+    font-size:18px;
+
+    padding:18px;
+
+    border-radius:15px;
+
+    margin-bottom:10px;
+
+    transition:0.3s;
+
+}
+
+
+.menu a:hover{
+
+    background:#1d4ed8;
+
+}
+
+
+.content{
+
+    margin-left:280px;
+
+    padding:40px;
+
+}
+
+
+h1,h2{
+
+    color:#1e293b;
+
+}
+
+.card{
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:20px;
+
+    margin-bottom:30px;
+
+    box-shadow:0px 0px 10px rgba(0,0,0,0.1);
+
+}
+
+
+label{
+
+    display:block;
+
+    margin-top:20px;
+
+    margin-bottom:10px;
+
+    font-weight:bold;
+
+}
+
+
+input{
+
+    width:100%;
+
+    padding:15px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:10px;
+
+    box-sizing:border-box;
+
+}
+
+
+.btn-blue{
+
+    background:#2563eb;
+
+    color:white;
+
+    border:none;
+
+    padding:15px;
+
+    border-radius:10px;
+
+    margin-top:20px;
+
+    cursor:pointer;
+
+}
+
+
+.btn-yellow{
+
+    background:#facc15;
+
+    border:none;
+
+    padding:10px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+}
+
+
+.btn-red{
+
+    background:#ef4444;
+
+    color:white;
+
+    border:none;
+
+    padding:10px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+}
+
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+
+th{
+
+    background:#f3f4f6;
+
+    padding:15px;
+
+}
+
+
+td{
+
+    padding:15px;
+
+    border-bottom:1px solid #e5e7eb;
+
+}

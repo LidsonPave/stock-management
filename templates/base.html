@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Stock Management System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+    <div class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                📦
+            </div>
+
+            <div>
+
+                <h2>Stock Management</h2>
+
+                <p>Sistema de Gestão de Estoque</p>
+
+            </div>
+
+        </div>
+
+        <div class="menu-title">
+
+            MENU PRINCIPAL
+
+        </div>
+
+        <div class="menu">
+
+            <a href="/">🏠 Home</a>
+
+            <a href="/products">📦 Produtos</a>
+
+            <a href="/sales">💰 Vendas</a>
+
+            <a href="/reports">📊 Relatórios</a>
+
+        </div>
+
+    </div>
+
+
+    <div class="content">
+
+        {% block content %}
+
+        {% endblock %}
+
+    </div>
+
+</body>
+
+</html>
