@@ -1,13 +1,51 @@
 from flask import Flask, render_template, request, redirect
 import sqlite3
+from flask import send_file
+from pdf_generator import generate_sales_pdf
+from pdf_generator import generate_sales_pdf
+from flask import send_file
+from flask import Flask, render_template, request, redirect, flash, get_flashed_messages
 
 app = Flask(__name__)
+app.secret_key = "chave_secreta_para_alertas"
 
 @app.route('/')
 def home():
 
     connection = sqlite3.connect('database/database.db')
     cursor = connection.cursor()
+
+    cursor.execute(
+        '''
+        SELECT COUNT(*)
+        FROM products
+        WHERE quantity <= minimum_stock
+        '''
+    )
+
+    low_stock_count = cursor.fetchone()[0]
+
+
+    cursor.execute(
+        '''
+        SELECT
+            products.name,
+            stock_movements.movement_type,
+            stock_movements.quantity,
+            stock_movements.date
+
+        FROM stock_movements
+
+        INNER JOIN products
+        ON products.id = stock_movements.product_id
+
+        ORDER BY stock_movements.id DESC
+
+        LIMIT 5
+        '''
+    )
+
+    recent_movements = cursor.fetchall()
 
     cursor.execute(
         'SELECT COUNT(*) FROM products'
@@ -64,7 +102,11 @@ def home():
 
         total_sales_value=round(total_sales_value, 2),
 
-        total_profit=round(total_profit, 2)
+        total_profit=round(total_profit, 2),
+
+        low_stock_count=low_stock_count,
+
+        recent_movements=recent_movements
 
     )
 
@@ -294,7 +336,6 @@ def entries():
         products=products,
         movements=movements
      )
-
 @app.route('/sales', methods=['GET', 'POST'])
 def sales():
 
@@ -306,17 +347,27 @@ def sales():
         product_id = request.form['product_id']
         quantity = int(request.form['quantity'])
 
+        # Busca o nome e a quantidade do produto para usar no alerta
         cursor.execute(
             '''
-            SELECT quantity
+            SELECT name, quantity
             FROM products
             WHERE id = ?
             ''',
             (product_id,)
         )
+        
+        product_data = cursor.fetchone()
+        product_name = product_data[0]
+        current_stock = product_data[1]
 
-        current_stock = cursor.fetchone()[0]
+        # TRAVA DE SEGURANÇA: Se tentar vender mais do que tem no estoque
+        if quantity > current_stock:
+            connection.close()
+            flash(f"Estoque insuficiente para '{product_name}'! Você tentou vender {quantity}, mas só existem {current_stock} unidades.", "error")
+            return redirect('/sales')
 
+        # Se passou da trava, executa a venda normalmente
         if quantity <= current_stock:
 
             cursor.execute(
@@ -363,9 +414,9 @@ def sales():
             connection.commit()
 
         connection.close()
-
         return redirect('/sales')
 
+    # Código do método GET (Carregamento da página)
     cursor.execute(
         '''
         SELECT id, name, quantity
@@ -373,7 +424,6 @@ def sales():
         ORDER BY name
         '''
     )
-
     products = cursor.fetchall()
 
     cursor.execute(
@@ -383,18 +433,13 @@ def sales():
             products.name,
             stock_movements.quantity,
             stock_movements.date
-
         FROM stock_movements
-
         INNER JOIN products
         ON products.id = stock_movements.product_id
-
         WHERE stock_movements.movement_type='Saída'
-
         ORDER BY stock_movements.id DESC
         '''
     )
-
     movements = cursor.fetchall()
 
     connection.close()
@@ -404,6 +449,7 @@ def sales():
         products=products,
         movements=movements
     )
+
 
 @app.route('/movements')
 def movements():
@@ -525,8 +571,131 @@ def cashflow():
 
 @app.route('/reports')
 def reports():
-    return render_template('reports.html')
 
+    connection = sqlite3.connect('database/database.db')
+    cursor = connection.cursor()
+
+
+    # Produtos em estoque baixo
+
+    cursor.execute(
+        '''
+        SELECT
+            name,
+            quantity,
+            minimum_stock
+
+        FROM products
+
+        WHERE quantity <= minimum_stock
+        '''
+    )
+
+    low_stock_products = cursor.fetchall()
+
+
+    # Entradas
+
+    cursor.execute(
+        '''
+        SELECT
+
+            products.name,
+
+            stock_movements.quantity,
+
+            stock_movements.date
+
+        FROM stock_movements
+
+        INNER JOIN products
+
+        ON products.id = stock_movements.product_id
+
+        WHERE movement_type='Entrada'
+
+        ORDER BY stock_movements.id DESC
+        '''
+    )
+
+    entries = cursor.fetchall()
+
+
+    # Saídas
+
+    cursor.execute(
+        '''
+        SELECT
+
+            products.name,
+
+            stock_movements.quantity,
+
+            stock_movements.total_value,
+
+            stock_movements.date
+
+        FROM stock_movements
+
+        INNER JOIN products
+
+        ON products.id = stock_movements.product_id
+
+        WHERE movement_type='Saída'
+
+        ORDER BY stock_movements.id DESC
+        '''
+    )
+
+    sales = cursor.fetchall()
+
+    connection.close()
+    generate_sales_pdf(sales)
+
+    return render_template(
+
+        'reports.html',
+
+        low_stock_products=low_stock_products,
+
+        entries=entries,
+
+        sales=sales
+
+    )
+@app.route('/export_sales_pdf')
+def export_sales_pdf():
+
+    connection = sqlite3.connect('database/database.db')
+    cursor = connection.cursor()
+
+    cursor.execute(
+        '''
+        SELECT
+            products.name,
+            stock_movements.quantity,
+            stock_movements.total_value,
+            stock_movements.date
+
+        FROM stock_movements
+
+        INNER JOIN products
+        ON products.id = stock_movements.product_id
+
+        WHERE movement_type='Saída'
+        '''
+    )
+
+    sales = cursor.fetchall()
+
+    connection.close()
+
+    generate_sales_pdf(sales)
+
+    return send_file(
+        'relatorio.pdf',
+        as_attachment=True
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)

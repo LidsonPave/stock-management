@@ -12,47 +12,51 @@
 
 <body>
 
-<div class="sidebar">
+<div class="sidebar" style="display: flex; flex-direction: column;">
 
-    <div class="logo">
+    <!-- Cabeçalho da Logo Ampliado e Centralizado de forma elegante -->
+    <div class="logo" style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 25px 15px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px;">
 
-        <div class="logo-icon">
-            📦
-        </div>
+        <!-- Logo maior e centralizada -->
+        <img src="{{ url_for('static', filename='logo.png') }}" 
+             alt="Logo" 
+             style="width: 75px; height: auto; display: block; margin-bottom: 12px; object-fit: contain;">
 
         <div>
 
-            <h2>Stock Management</h2>
+            <!-- Título com tamanho ideal e legível -->
+            <h2 style="margin: 0; font-size: 18px; color: #ffffff; font-family: sans-serif; font-weight: bold; letter-spacing: 0.5px;">Stock Management</h2>
 
-            <p>Sistema de Gestão de Estoque</p>
+            <p style="margin: 4px 0 0 0; font-size: 11px; color: #94a3b8; font-family: sans-serif; text-transform: uppercase; letter-spacing: 1px;">Gestão de Estoque</p>
 
         </div>
 
     </div>
 
-    <div class="menu-title">
+    <div class="menu-title" style="padding-left: 20px; margin-bottom: 10px;">
 
         MENU PRINCIPAL
 
     </div>
 
-    <div class="menu">
+    <!-- Menu ajustado com mais espaçamento interno para descer e ocupar o espaço vazio -->
+    <div class="menu" style="display: flex; flex-direction: column; gap: 8px; flex-grow: 1;">
 
-    <a href="/">🏠 Home</a>
+        <a href="/" style="padding: 14px 20px; font-size: 15px;">🏠 Home</a>
 
-    <a href="/products">📦 Produtos</a>
+        <a href="/products" style="padding: 14px 20px; font-size: 15px;">📦 Produtos</a>
 
-    <a href="/entries">📥 Entradas</a>
+        <a href="/entries" style="padding: 14px 20px; font-size: 15px;">📥 Entradas</a>
 
-    <a href="/sales">💰 Vendas</a>
+        <a href="/sales" style="padding: 14px 20px; font-size: 15px;">💰 Vendas</a>
 
-    <a href="/movements">📜 Histórico</a>
+        <a href="/movements" style="padding: 14px 20px; font-size: 15px;">📜 Histórico</a>
 
-    <a href="/cashflow">💵 Caixa</a>
-    
-    <a href="/reports">📊 Relatórios</a>
+        <a href="/cashflow" style="padding: 14px 20px; font-size: 15px;">💵 Caixa</a>
 
-</div>
+        <a href="/reports" style="padding: 14px 20px; font-size: 15px;">📊 Relatórios</a>
+
+    </div>
 
 </div>
 
@@ -91,3 +95,4 @@ function toggleForm(){
 </body>
 
 </html>
+

@@ -2,8 +2,163 @@
 
 {% block content %}
 
-<h2>Relatórios</h2>
+<h1>
 
-<p>Aqui serão exibidos os relatórios.</p>
+📊 Relatórios
+
+</h1>
+
+<div class="dropdown">
+
+    <button class="btn-blue">
+
+        📄 Exportar PDF ▼
+
+    </button>
+
+    <div class="dropdown-content">
+
+        <a href="/export_general_pdf">
+
+            📊 Relatório Geral
+
+        </a>
+
+        <a href="/export_entries_pdf">
+
+            📥 Entradas
+
+        </a>
+
+        <a href="/export_sales_pdf">
+
+            📤 Saídas
+
+        </a>
+
+        <a href="/export_low_stock_pdf">
+
+            ⚠ Estoque Baixo
+
+        </a>
+
+        <a href="/export_cashflow_pdf">
+
+            💰 Fluxo de Caixa
+
+        </a>
+
+    </div>
+
+</div>
+
+
+<h2>
+
+⚠ Produtos com Estoque Baixo
+
+</h2>
+
+<table>
+
+<tr>
+
+<th>Produto</th>
+
+<th>Quantidade</th>
+
+<th>Mínimo</th>
+
+</tr>
+
+{% for product in low_stock_products %}
+
+<tr>
+
+<td>{{ product[0] }}</td>
+
+<td>{{ product[1] }}</td>
+
+<td>{{ product[2] }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+
+<h2>
+
+📥 Entradas
+
+</h2>
+
+<table>
+
+<tr>
+
+<th>Produto</th>
+
+<th>Quantidade</th>
+
+<th>Data</th>
+
+</tr>
+
+{% for entry in entries %}
+
+<tr>
+
+<td>{{ entry[0] }}</td>
+
+<td>{{ entry[1] }}</td>
+
+<td>{{ entry[2] }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+
+<h2>
+
+📤 Saídas
+
+</h2>
+
+<table>
+
+<tr>
+
+<th>Produto</th>
+
+<th>Quantidade</th>
+
+<th>Valor</th>
+
+<th>Data</th>
+
+</tr>
+
+{% for sale in sales %}
+
+<tr>
+
+<td>{{ sale[0] }}</td>
+
+<td>{{ sale[1] }}</td>
+
+<td>{{ sale[2] }} MT</td>
+
+<td>{{ sale[3] }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
 
 {% endblock %}
