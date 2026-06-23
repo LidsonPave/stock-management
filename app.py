@@ -1,14 +1,18 @@
 from flask import Flask, render_template, request, redirect
 import sqlite3
 from flask import send_file
-from pdf_generator import generate_sales_pdf
-from pdf_generator import generate_sales_pdf
+from pdf_generator import (
+    generate_sales_pdf,
+    generate_general_pdf,
+    generate_entries_pdf,
+    generate_low_stock_pdf,
+    generate_cashflow_pdf
+)
+from flask import session
 from flask import send_file
 from flask import Flask, render_template, request, redirect, flash, get_flashed_messages
-
 app = Flask(__name__)
 app.secret_key = "chave_secreta_para_alertas"
-
 @app.route('/')
 def home():
 
@@ -694,6 +698,165 @@ def export_sales_pdf():
 
     return send_file(
         'relatorio.pdf',
+        as_attachment=True
+    )
+
+@app.route('/export_general_pdf')
+def export_general_pdf():
+
+    connection = sqlite3.connect('database/database.db')
+    cursor = connection.cursor()
+
+    cursor.execute('SELECT COUNT(*) FROM products')
+    total_products = cursor.fetchone()[0]
+
+    cursor.execute('SELECT SUM(quantity) FROM products')
+    total_stock = cursor.fetchone()[0] or 0
+
+    cursor.execute(
+        'SELECT SUM(quantity * purchase_price) FROM products'
+    )
+    total_investment = cursor.fetchone()[0] or 0
+
+    cursor.execute(
+        '''
+        SELECT SUM(total_value)
+        FROM stock_movements
+        WHERE movement_type="Saída"
+        '''
+    )
+    total_sales = cursor.fetchone()[0] or 0
+
+    cursor.execute(
+        'SELECT SUM(amount) FROM cash_flow'
+    )
+    total_withdrawals = cursor.fetchone()[0] or 0
+
+    connection.close()
+
+    generate_general_pdf(
+        total_products,
+        total_stock,
+        total_investment,
+        total_sales,
+        total_withdrawals
+    )
+
+    return send_file(
+        'relatorio_geral.pdf',
+        as_attachment=True
+    )
+
+@app.route('/export_entries_pdf')
+def export_entries_pdf():
+
+    connection = sqlite3.connect('database/database.db')
+    cursor = connection.cursor()
+
+    cursor.execute(
+        '''
+        SELECT
+            products.name,
+            stock_movements.quantity,
+            stock_movements.date
+
+        FROM stock_movements
+
+        INNER JOIN products
+        ON products.id = stock_movements.product_id
+
+        WHERE movement_type='Entrada'
+
+        ORDER BY stock_movements.id DESC
+        '''
+    )
+
+    entries = cursor.fetchall()
+
+    connection.close()
+
+    generate_entries_pdf(entries)
+
+    return send_file(
+        'relatorio_entradas.pdf',
+        as_attachment=True
+    )
+
+
+@app.route('/export_low_stock_pdf')
+def export_low_stock_pdf():
+
+    connection = sqlite3.connect('database/database.db')
+    cursor = connection.cursor()
+
+    cursor.execute('''
+        SELECT
+            name,
+            quantity,
+            minimum_stock
+        FROM products
+        WHERE quantity <= minimum_stock
+    ''')
+
+    products = cursor.fetchall()
+
+    connection.close()
+
+    generate_low_stock_pdf(products)
+
+    return send_file(
+        'relatorio_estoque_baixo.pdf',
+        as_attachment=True
+    )
+
+@app.route('/export_cashflow_pdf')
+def export_cashflow_pdf():
+
+    connection = sqlite3.connect('database/database.db')
+    cursor = connection.cursor()
+
+    cursor.execute('''
+        SELECT *
+        FROM cash_flow
+        ORDER BY id DESC
+    ''')
+
+    withdrawals = cursor.fetchall()
+
+    cursor.execute('''
+        SELECT SUM(total_value)
+        FROM stock_movements
+        WHERE movement_type='Saída'
+    ''')
+
+    total_sales = cursor.fetchone()[0]
+
+    if total_sales is None:
+        total_sales = 0
+
+    cursor.execute('''
+        SELECT SUM(amount)
+        FROM cash_flow
+    ''')
+
+    total_withdrawals = cursor.fetchone()[0]
+
+    if total_withdrawals is None:
+        total_withdrawals = 0
+
+    balance = total_sales - total_withdrawals
+
+    connection.close()
+
+    generate_cashflow_pdf(
+        withdrawals,
+        total_sales,
+        total_withdrawals,
+        balance
+    )
+
+    return send_file(
+        'relatorio_fluxo_caixa.pdf',
         as_attachment=True
     )
 

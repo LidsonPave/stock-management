@@ -195,7 +195,7 @@ def generate_sales_pdf(sales):
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE')
     ]))
-    
+
     elements.append(sig_table)
 
     pdf.build(
@@ -204,3 +204,422 @@ def generate_sales_pdf(sales):
         onLaterPages=add_header_footer
     )
 
+def generate_general_pdf(
+    total_products,
+    total_stock,
+    total_investment,
+    total_sales,
+    total_withdrawals
+):
+
+    pdf = SimpleDocTemplate(
+        "relatorio_geral.pdf",
+        leftMargin=2*cm,
+        rightMargin=2*cm,
+        topMargin=3*cm,
+        bottomMargin=2.5*cm
+    )
+
+    styles = getSampleStyleSheet()
+
+    title_style = ParagraphStyle(
+        'DocTitle',
+        parent=styles['Heading1'],
+        alignment=TA_CENTER,
+        fontName='Helvetica-Bold',
+        fontSize=22,
+        leading=26,
+        textColor=colors.HexColor("#1e293b"),
+        spaceAfter=6
+    )
+
+    meta_style = ParagraphStyle(
+        'DocMeta',
+        parent=styles['Normal'],
+        alignment=TA_CENTER,
+        fontName='Helvetica',
+        fontSize=10,
+        textColor=colors.HexColor("#64748b")
+    )
+
+    th_style = ParagraphStyle(
+        'TableHeader',
+        fontName='Helvetica-Bold',
+        fontSize=10,
+        textColor=colors.white,
+        alignment=TA_CENTER
+    )
+
+    td_style = ParagraphStyle(
+        'TableCell',
+        fontName='Helvetica',
+        fontSize=10,
+        textColor=colors.HexColor("#334155"),
+        alignment=TA_CENTER
+    )
+
+    elements = []
+
+    try:
+        logo = Image("images/logo.png", width=5.6*cm, height=3.2*cm)
+        logo.hAlign = 'CENTER'
+        elements.append(logo)
+        elements.append(Spacer(1, 0.4*cm))
+    except:
+        elements.append(Spacer(1, 1*cm))
+
+    elements.append(Paragraph("RELATÓRIO GERAL", title_style))
+
+    data_atual = datetime.now().strftime("%d/%m/%Y às %H:%M")
+    elements.append(Paragraph(f"Emitido em: {data_atual}", meta_style))
+    elements.append(Spacer(1, 0.8*cm))
+
+    saldo = total_sales - total_withdrawals
+
+    data = [
+        [
+            Paragraph('Descrição', th_style),
+            Paragraph('Valor', th_style)
+        ],
+
+        [
+            Paragraph('Produtos cadastrados', td_style),
+            Paragraph(str(total_products), td_style)
+        ],
+
+        [
+            Paragraph('Itens em estoque', td_style),
+            Paragraph(str(total_stock), td_style)
+        ],
+
+        [
+            Paragraph('Investimento', td_style),
+            Paragraph(f'{total_investment:,.2f} MT', td_style)
+        ],
+
+        [
+            Paragraph('Total de vendas', td_style),
+            Paragraph(f'{total_sales:,.2f} MT', td_style)
+        ],
+
+        [
+            Paragraph('Saídas do caixa', td_style),
+            Paragraph(f'{total_withdrawals:,.2f} MT', td_style)
+        ],
+
+        [
+            Paragraph('Saldo', td_style),
+            Paragraph(f'{saldo:,.2f} MT', td_style)
+        ]
+    ]
+
+    tabela = Table(data, colWidths=[8*cm, 8*cm])
+
+    tabela.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,0), colors.HexColor("#1e293b")),
+        ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+        ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+        ('BOTTOMPADDING', (0,0), (-1,0), 8),
+        ('TOPPADDING', (0,0), (-1,0), 8),
+        ('ROWBACKGROUNDS', (0,1), (-1,-1),
+         [colors.white, colors.HexColor("#f8fafc")]),
+        ('GRID', (0,0), (-1,-1), 0.5, colors.HexColor("#cbd5e1")),
+        ('BOTTOMPADDING', (0,1), (-1,-1), 6),
+        ('TOPPADDING', (0,1), (-1,-1), 6),
+    ]))
+
+    elements.append(tabela)
+    elements.append(Spacer(1, 2*cm))
+
+    sig_line_style = ParagraphStyle(
+        'SigLine',
+        alignment=TA_CENTER,
+        fontName='Helvetica',
+        fontSize=9,
+        textColor=colors.HexColor("#64748b")
+    )
+
+    sig_data = [
+        [Paragraph("_______________________________________", sig_line_style)],
+        [Spacer(1, 0.15 * cm)],
+        [Paragraph("Assinatura do Responsável", sig_line_style)]
+    ]
+
+    sig_table = Table(sig_data, colWidths=[17 * cm])
+
+    sig_table.setStyle(TableStyle([
+        ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+        ('VALIGN', (0,0), (-1,-1), 'MIDDLE')
+    ]))
+
+    elements.append(sig_table)
+
+    pdf.build(
+        elements,
+        onFirstPage=add_header_footer,
+        onLaterPages=add_header_footer
+    )
+
+
+def generate_entries_pdf(entries):
+
+    pdf = SimpleDocTemplate(
+        "relatorio_entradas.pdf",
+        leftMargin=2*cm,
+        rightMargin=2*cm,
+        topMargin=3*cm,
+        bottomMargin=2.5*cm
+    )
+
+    styles = getSampleStyleSheet()
+
+    title_style = ParagraphStyle(
+        'DocTitle',
+        parent=styles['Heading1'],
+        alignment=TA_CENTER,
+        fontName='Helvetica-Bold',
+        fontSize=22,
+        textColor=colors.HexColor("#1e293b")
+    )
+
+    meta_style = ParagraphStyle(
+        'DocMeta',
+        parent=styles['Normal'],
+        alignment=TA_CENTER,
+        fontSize=10,
+        textColor=colors.HexColor("#64748b")
+    )
+
+    th_style = ParagraphStyle(
+        'TableHeader',
+        fontName='Helvetica-Bold',
+        fontSize=10,
+        textColor=colors.white,
+        alignment=TA_CENTER
+    )
+
+    td_style = ParagraphStyle(
+        'TableCell',
+        fontName='Helvetica',
+        fontSize=9,
+        alignment=TA_CENTER
+    )
+
+    elements = []
+
+    try:
+        logo = Image("images/logo.png", width=5.6*cm, height=3.2*cm)
+        logo.hAlign = 'CENTER'
+        elements.append(logo)
+    except:
+        pass
+
+    elements.append(Paragraph("RELATÓRIO DE ENTRADAS", title_style))
+
+    data_atual = datetime.now().strftime("%d/%m/%Y às %H:%M")
+
+    elements.append(
+        Paragraph(
+            f"Emitido em: {data_atual}",
+            meta_style
+        )
+    )
+
+    elements.append(Spacer(1,0.8*cm))
+
+    data = [[
+        Paragraph("Produto", th_style),
+        Paragraph("Quantidade", th_style),
+        Paragraph("Data", th_style)
+    ]]
+
+    for entry in entries:
+
+        data.append([
+
+            Paragraph(str(entry[0]), td_style),
+
+            Paragraph(str(entry[1]), td_style),
+
+            Paragraph(str(entry[2]), td_style)
+
+        ])
+
+    tabela = Table(
+        data,
+        colWidths=[7*cm,3*cm,6*cm]
+    )
+
+    tabela.setStyle(TableStyle([
+
+        ('BACKGROUND',(0,0),(-1,0),colors.HexColor("#1e293b")),
+
+        ('TEXTCOLOR',(0,0),(-1,0),colors.white),
+
+        ('ALIGN',(0,0),(-1,-1),'CENTER'),
+
+        ('ROWBACKGROUNDS',(0,1),(-1,-1),
+         [colors.white, colors.HexColor("#f8fafc")]),
+
+        ('GRID',(0,0),(-1,-1),0.5,colors.HexColor("#cbd5e1"))
+
+    ]))
+
+    elements.append(tabela)
+
+    pdf.build(
+        elements,
+        onFirstPage=add_header_footer,
+        onLaterPages=add_header_footer
+    )
+
+
+def generate_low_stock_pdf(products):
+
+    pdf = SimpleDocTemplate(
+        "relatorio_estoque_baixo.pdf",
+        leftMargin=2*cm,
+        rightMargin=2*cm,
+        topMargin=3*cm,
+        bottomMargin=2.5*cm
+    )
+
+    styles = getSampleStyleSheet()
+    elements = []
+
+    try:
+        logo = Image("images/logo.png", width=5.6*cm, height=3.2*cm)
+        logo.hAlign = 'CENTER'
+        elements.append(logo)
+        elements.append(Spacer(1,0.4*cm))
+    except:
+        pass
+
+    elements.append(Paragraph("RELATÓRIO DE ESTOQUE BAIXO", styles['Heading1']))
+    elements.append(
+        Paragraph(
+            f"Emitido em: {datetime.now().strftime('%d/%m/%Y às %H:%M')}",
+            styles['Normal']
+        )
+    )
+
+    elements.append(Spacer(1,0.8*cm))
+
+    data = [
+        ['Produto', 'Quantidade', 'Mínimo']
+    ]
+
+    for product in products:
+        data.append([
+            product[0],
+            str(product[1]),
+            str(product[2])
+        ])
+
+    tabela = Table(data, colWidths=[8*cm,4*cm,4*cm])
+
+    tabela.setStyle(TableStyle([
+        ('BACKGROUND',(0,0),(-1,0),colors.HexColor("#1e293b")),
+        ('TEXTCOLOR',(0,0),(-1,0),colors.white),
+        ('FONTNAME',(0,0),(-1,0),'Helvetica-Bold'),
+        ('ROWBACKGROUNDS',(0,1),(-1,-1),
+            [colors.white, colors.HexColor("#f8fafc")]),
+        ('GRID',(0,0),(-1,-1),1,colors.black),
+        ('ALIGN',(0,0),(-1,-1),'CENTER'),
+        ('PADDING',(0,0),(-1,-1),8)
+    ]))
+
+    elements.append(tabela)
+
+    pdf.build(
+        elements,
+        onFirstPage=add_header_footer,
+        onLaterPages=add_header_footer
+    )
+
+
+def generate_cashflow_pdf(withdrawals, total_sales, total_withdrawals, balance):
+
+    pdf = SimpleDocTemplate(
+        "relatorio_fluxo_caixa.pdf",
+        leftMargin=2*cm,
+        rightMargin=2*cm,
+        topMargin=3*cm,
+        bottomMargin=2.5*cm
+    )
+
+    styles = getSampleStyleSheet()
+    elements = []
+
+    try:
+        logo = Image("images/logo.png", width=5.6*cm, height=3.2*cm)
+        logo.hAlign = 'CENTER'
+        elements.append(logo)
+        elements.append(Spacer(1,0.4*cm))
+    except:
+        pass
+
+    elements.append(
+        Paragraph(
+            "RELATÓRIO DE FLUXO DE CAIXA",
+            styles['Heading1']
+        )
+    )
+
+    elements.append(
+        Paragraph(
+            f"Emitido em: {datetime.now().strftime('%d/%m/%Y às %H:%M')}",
+            styles['Normal']
+        )
+    )
+
+    elements.append(Spacer(1,0.8*cm))
+
+    resumo = [
+        ['Total de Vendas', f'{total_sales:.2f} MT'],
+        ['Saídas do Caixa', f'{total_withdrawals:.2f} MT'],
+        ['Saldo', f'{balance:.2f} MT']
+    ]
+
+    tabela_resumo = Table(resumo, colWidths=[8*cm,8*cm])
+
+    tabela_resumo.setStyle(TableStyle([
+        ('BACKGROUND',(0,0),(-1,-1),colors.whitesmoke),
+        ('GRID',(0,0),(-1,-1),1,colors.black),
+        ('PADDING',(0,0),(-1,-1),8),
+        ('ALIGN',(0,0),(-1,-1),'CENTER')
+    ]))
+
+    elements.append(tabela_resumo)
+    elements.append(Spacer(1,1*cm))
+
+    data = [
+        ['Descrição', 'Valor']
+    ]
+
+    for withdrawal in withdrawals:
+        data.append([
+            withdrawal[1],
+            f'{withdrawal[2]:.2f} MT'
+        ])
+
+    tabela = Table(data, colWidths=[10*cm,6*cm])
+
+    tabela.setStyle(TableStyle([
+        ('BACKGROUND',(0,0),(-1,0),colors.HexColor("#1e293b")),
+        ('TEXTCOLOR',(0,0),(-1,0),colors.white),
+        ('FONTNAME',(0,0),(-1,0),'Helvetica-Bold'),
+        ('ROWBACKGROUNDS',(0,1),(-1,-1),
+            [colors.white, colors.HexColor("#f8fafc")]),
+        ('GRID',(0,0),(-1,-1),1,colors.black),
+        ('ALIGN',(0,0),(-1,-1),'CENTER'),
+        ('PADDING',(0,0),(-1,-1),8)
+    ]))
+
+    elements.append(tabela)
+
+    pdf.build(
+        elements,
+        onFirstPage=add_header_footer,
+        onLaterPages=add_header_footer
+    )

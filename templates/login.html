@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Login - Stock Management</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body style="
+background:#0f172a;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+font-family:sans-serif;
+">
+
+<div style="
+width:400px;
+background:#1e293b;
+padding:40px;
+border-radius:20px;
+box-shadow:0 0 30px rgba(0,0,0,.4);
+text-align:center;
+">
+
+    <img src="{{ url_for('static', filename='logo.png') }}"
+         width="100">
+
+    <h1 style="
+    color:white;
+    margin-top:15px;
+    ">
+        Stock Management
+    </h1>
+
+    <p style="
+    color:#94a3b8;
+    margin-bottom:30px;
+    ">
+        Faça login para continuar
+    </p>
+
+    <form method="POST">
+
+        <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            required
+
+            style="
+            width:100%;
+            padding:15px;
+            margin-bottom:15px;
+            border:none;
+            border-radius:10px;
+            background:#334155;
+            color:white;
+            font-size:15px;
+            box-sizing:border-box;
+            ">
+
+        <input
+            type="password"
+            name="password"
+            placeholder="Senha"
+            required
+
+            style="
+            width:100%;
+            padding:15px;
+            margin-bottom:20px;
+            border:none;
+            border-radius:10px;
+            background:#334155;
+            color:white;
+            font-size:15px;
+            box-sizing:border-box;
+            ">
+
+        <button style="
+        width:100%;
+        padding:15px;
+        border:none;
+        border-radius:10px;
+        background:#2563eb;
+        color:white;
+        font-size:16px;
+        font-weight:bold;
+        cursor:pointer;
+        ">
+
+            Entrar
+
+        </button>
+
+    </form>
+
+    <div style="
+    margin-top:20px;
+    ">
+
+        <a href="/forgot_password"
+           style="
+           color:#60a5fa;
+           text-decoration:none;
+           display:block;
+           margin-bottom:10px;
+           ">
+            Esqueceu a senha?
+        </a>
+
+        <a href="/register"
+           style="
+           color:#94a3b8;
+           text-decoration:none;
+           ">
+            Criar conta
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>
